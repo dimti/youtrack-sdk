@@ -20,6 +20,8 @@ from .entities import (
     Tag,
     User,
     WorkItemType,
+    UserProfile,
+    CommandList,
 )
 from .exceptions import YouTrackException, YouTrackNotFound, YouTrackUnauthorized
 from .helpers import model_to_field_names, obj_to_json
@@ -665,6 +667,43 @@ class Client:
                 url=self._build_url(
                     path=f"/agiles/{agile_id}/sprints/{sprint_id}",
                     fields=model_to_field_names(Sprint),
+                ),
+            ),
+        )
+
+    def execute_command(
+        self,
+        command: str,
+        issue_id: str,
+        mute_update_notifications: bool = False,
+    ):
+        """Execute a command on the specific issue.
+
+        https://www.jetbrains.com/help/youtrack/devportal/resource-api-commands.html#create-CommandList-method
+        """
+        self._post(
+            url=self._build_url(
+                path="/commands",
+                muteUpdateNotifications=mute_update_notifications,
+            ),
+            data=CommandList.model_construct(
+                query=command,
+                issues=[
+                    Issue.model_construct(id_readable=issue_id)
+                ],
+            ),
+        )
+
+    def my_user_profile(self):
+        """Get user profile.
+
+        https://www.jetbrains.com/help/youtrack/devportal/operations-api-users-me.html#get-Me-method
+        """
+        return UserProfile.model_validate_json(
+            self._get(
+                url=self._build_url(
+                    path="/users/me",
+                    fields=model_to_field_names(UserProfile),
                 ),
             ),
         )

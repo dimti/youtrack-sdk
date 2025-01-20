@@ -391,3 +391,12 @@ class Sprint(SprintRef):
     issues: Optional[Sequence[Issue]] = None
     unresolved_issues_count: Optional[int] = Field(alias="unresolvedIssuesCount", default=None)
     previous_sprint: Optional[SprintRef] = Field(alias="previousSprint", default=None)
+
+class UserProfile(BaseModel):
+    id: Optional[str] = None
+    login: Optional[str] = None
+
+class CommandList(BaseModel):
+    id: Optional[str] = None
+    query: Optional[str] = None
+    issues: Optional[Sequence[Issue]] = None
